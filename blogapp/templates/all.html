@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}全部文章{% endblock %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h2>全部文章</h2>
+    <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>文章ID</th>
+            <th>文章名称</th>
+            <th>投稿人</th>
+            <th>投稿时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for blog in page_obj %}
+          <tr>
+            <td>{{ blog.id }}</td>
+            <td><a href="/page/{{ blog.id }}">{{ blog.title }}</a></td>
+            <td><a href="/profile/{{ blog.poster_id }}">{{ blog.username }} (ID: {{ blog.poster_id }})</a></td>
+            <td>{{ blog.upload_date }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4">暂无博客</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      
+      <div class="pagination">
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}">上一页</a>
+        {% endif %}
+        <span class="current-page">{{ page_obj.number }}</span>
+        /
+        <span class="total-pages">{{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}">下一页</a>
+        {% endif %}
+      </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}博客管理系统{% endblock %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h2>最近上传的文章</h2>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>文章ID</th>
+          <th>文章名称</th>
+          <th>投稿人</th>
+          <th>投稿时间</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for blog in page_obj %}
+        <tr>
+          <td>{{ blog.id }}</td>
+          <td><a href="/page/{{ blog.id }}">{{ blog.title }}</a></td>
+          <td><a href="/profile/{{ blog.poster_id }}">{{ blog.poster.username }} (ID: {{ blog.poster_id }})</a></td>
+          <td>{{ blog.upload_date }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4">暂无博客</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div style="margin-top: 50px;"></div>
+    <h2>最近注册的用户</h2>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+            <th>用户ID</th>
+            <th>用户名</th>
+            <th>注册时间</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+
+          <td>{{ user.id }}</td>
+          <td><a href="/profile/{{ user.id }}">{{ user.username }}</a></td>
+          <td>{{ user.register_date }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4">暂无博客</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

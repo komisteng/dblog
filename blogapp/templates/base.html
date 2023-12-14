@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <!-- 加载 static 标签库 -->
+    {% load static %}
+    <!-- 引入 Bootstrap 和 jQuery 的本地文件 -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.js' %}"></script>
+    <!-- 其他样式表和元数据 -->
+</head>
+<body>
+    <header>
+        <!-- 导航栏 -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/main">114514</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/all">全部文章</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav ml-auto">
+                        {% if login_user.id %}
+                            <ul class="navbar-nav">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/upload">投稿</a>
+                                </li>
+                            </ul>
+                            <!-- 登录状态下显示用户名和下拉菜单 -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    你好，{% if login_user.admin == 1 %}管理员 {% endif %}{{ login_user.username }}！
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" href="/profile/{{ login_user.id }}">个人主页</a></li>
+                                    <li><a class="dropdown-item" href="/user_update/">个人信息维护</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="logout()">退出登录</a></li>
+                                </ul>
+                            </li>
+                        {% else %}
+                            <!-- 未登录状态下显示登录和注册链接 -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="/login">登录</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/register">注册</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <main>
+        <!-- 主要内容 -->
+        {% block content %}
+        {% endblock %}
+    </main>
+    
+    <footer>
+        <!-- 页脚 -->
+    </footer>
+    
+    <!-- 引入 Bootstrap 和 jQuery 的 JavaScript -->
+    <script src="{% static 'js/bootstrap.bundle.js' %}"></script>
+    <script>
+        // 初始化 Bootstrap 组件
+        document.addEventListener('DOMContentLoaded', function() {
+            var dropdownElements = document.querySelectorAll('.dropdown-toggle');
+            var dropdownInstances = Array.from(dropdownElements).map(function(element) {
+                return new bootstrap.Dropdown(element);
+            });
+        });
+    </script>
+    <script>
+        // 从Cookie中获取CSRF令牌
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+    </script>
+    <script>
+        function logout() {
+            // 发送POST请求到退出登录的URL
+            fetch('/logout/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')  // 获取CSRF令牌并设置到请求头中
+                },
+                body: JSON.stringify({})  // 发送空的请求体
+            })
+            .then(response => {
+                if (response.ok) {
+                    // 刷新页面
+                    window.location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('退出登录失败:', error);
+            });
+        }
+    </script>
+</body>
+</html>

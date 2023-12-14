@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ blog.title }}{% endblock %}
+
+{% block content %}
+  <div class="row justify-content-center"> <!-- 使用Bootstrap的网格系统将内容居中 -->
+    <div class="col-md-6">
+      <h1 class="text-center">{{ blog.title }}</h1> <!-- 使用text-center类将标题居中 -->
+      <p class="text-right"> 作者：{% if user.admin == 1 %}管理员 {% endif %}{{ blog.poster.username }} (ID: {{ blog.poster_id }})<!-- 使用text-left类使文本左对齐 --></p>
+      {{ content|safe }}
+    </div>
+  </div>
+{% endblock %}

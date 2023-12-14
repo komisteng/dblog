@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}您无权访问！{% endblock %}
+
+{% block content %}
+  <div class="row justify-content-center"> <!-- 使用Bootstrap的网格系统将内容居中 -->
+    <div class="col-md-6">
+      <h1 class="text-center">您无权访问这个页面。</h1> <!-- 使用text-center类将标题居中 -->
+      <h4 class="text-center">原因：{{error}}</h4>
+      <h4 class="text-center">你可以尝试：<a href="/login">登录或切换账号</a></h4>
+    </div>
+  </div>
+{% endblock %}

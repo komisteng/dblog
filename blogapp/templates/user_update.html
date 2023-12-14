@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}个人信息维护{% endblock %}
+
+{% block content %}
+  <div class="row justify-content-center"> <!-- 使用Bootstrap的网格系统将内容居中 -->
+    <div class="col-md-6">
+      <h2 class="text-center">修改用户{{user.username}}信息</h2> <!-- 使用text-center类将标题居中 -->
+      {% if error %}
+        <p>{{ error }}</p>
+      {% endif %}
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="username">用户名：</label>
+          <input type="text" class="form-control" id="username" name="username" required value="{{user.username}}">
+        </div>
+        <div class="form-group">
+          <label for="birth">生日：</label>
+          <input type="text" class="form-control" id="birth" name="birth" required value="{{user.birth}}">
+        </div>
+        <div class="form-group">
+          <label for="mail">邮箱：</label>
+          <input type="email" class="form-control" id="mail" name="mail" required value="{{user.mail}}">
+        </div>
+        <div class="form-group">
+          <label for="gender">性别：</label>
+          <select class="form-control" id="gender" name="gender" required>
+            <option value="0">不愿意透露</option>
+            <option value="1">男</option>
+            <option value="2">女</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="bilibili_id">Bilibili ID：</label>
+          <input type="text" class="form-control" id="bilibili_id" name="bilibili_id" value="{{user.bilibili_id}}">
+        </div>
+        <div class="text-center">
+          <button type="submit" class="btn btn-primary">更新</button> <!-- 使用btn和btn-primary类修改按钮样式 -->
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

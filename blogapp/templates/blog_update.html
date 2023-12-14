@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}更新文章{{blog.title}}（id：{{blog.id}}）{% endblock %}
+
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <h2 class="text-center">更新文章{{blog.title}}（id：{{blog.id}}）</h2>
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="title">标题：</label>
+          <input type="text" class="form-control" id="title" name="title" required value="{{blog.title}}">
+        </div>
+        <div class="form-group">
+          <label for="file">上传Markdown文件：</label>
+          <input type="file" class="form-control-file" id="file" name="file" accept=".md">
+        </div>
+        <a class="dropdown-item" href="https://vscode.dev">推荐使用 VSCode 编辑 Markdown 格式文件</a>
+        <div class="form-group">
+          <label for="body">或者使用TinyMCE编辑正文：</label>
+          <textarea class="form-control" id="body" name="body" rows="10" required>{{blog.body}}</textarea>
+        </div>
+        <div class="text-center">
+          <button type="submit" class="btn btn-primary">提交</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.tiny.cloud/1/{YOUR_API_KEY}/tinymce/5/tinymce.min.js"></script>
+  <script>
+    tinymce.init({
+      selector: '#body',
+      height: 300,
+      plugins: 'advlist autolink lists link image charmap print preview anchor',
+      toolbar: 'undo redo | formatselect | bold italic backcolor | \
+                alignleft aligncenter alignright alignjustify | \
+                bullist numlist outdent indent | removeformat | image',
+      file_picker_types: 'file image media',
+      images_upload_handler: function (blobInfo, success, failure) {
+        var xhr, formData;
+
+        xhr = new XMLHttpRequest();
+        xhr.withCredentials = false;
+        xhr.open('POST', '/upload');
+
+        xhr.onload = function() {
+          var json;
+
+          if (xhr.status !== 200) {
+            failure('HTTP Error: ' + xhr.status);
+            return;
+          }
+
+          json = JSON.parse(xhr.responseText);
+
+          if (!json || typeof json.location !== 'string') {
+            failure('Invalid JSON: ' + xhr.responseText);
+            return;
+          }
+
+          success(json.location);
+        };
+
+        formData = new FormData();
+        formData.append('file', blobInfo.blob(), blobInfo.filename());
+
+        xhr.send(formData);
+      }
+    });
+
+    document.getElementById('file').addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      var fileName = file.name;
+      var fileExtension = fileName.split('.').pop().toLowerCase();
+      if (fileExtension === 'md') {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          var contents = e.target.result;
+          tinymce.activeEditor.setContent(contents);
+        };
+        reader.readAsText(file);
+      } else {
+        alert('请选择一个Markdown文件！');
+      }
+    });
+  </script>
+{% endblock %}

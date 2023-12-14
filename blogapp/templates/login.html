@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}登录{% endblock %}
+
+{% block content %}
+  <div class="row justify-content-center"> <!-- 使用Bootstrap的网格系统将内容居中 -->
+    <div class="col-md-6">
+      <h2 class="text-center">登录</h2> <!-- 使用text-center类将标题居中 -->
+      {% if error %}
+        <p>{{ error }}</p>
+      {% endif %}
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="mail">邮箱：</label>
+          <input type="email" class="form-control" id="mail" name="mail" required>
+        </div>
+        <div class="form-group">
+          <label for="password">密码：</label>
+          <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+        <div class="text-center">
+          <button type="submit" class="btn btn-primary">登录</button> <!-- 使用btn和btn-primary类修改按钮样式 -->
+        </div>
+        <div class="text-center mt-2">
+          <a class="dropdown-item" href="/register">没有账号？去注册</a>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

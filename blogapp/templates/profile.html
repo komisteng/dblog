@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ user.username }}的个人空间{% endblock %}
+
+{% block content %}
+  <div class="row justify-content-center"> <!-- 使用Bootstrap的网格系统将内容居中 -->
+    <div class="col-md-6">
+      <h1 class="text-center">{% if user.admin == 1 %}管理员 {% endif %}{{ user.username }}的个人空间</h1> <!-- 使用text-center类将标题居中 -->
+      <p class="text-left"> <!-- 使用text-left类使文本左对齐 -->
+        用户名: {{ user.username }}
+        {% if user.bilibili_id %}
+          <a href="https://space.bilibili.com/{{ user.bilibili_id }}" target="_blank" class="btn btn-primary">查看Ta的Bilibili主页</a>
+        {% endif %}
+      </p>
+      <p class="text-left">ID：{{user.id}}</p>
+      <p class="text-left">出生日期: {{ user.birth }}</p>
+      <p class="text-left">邮箱: {{ user.mail }}</p>
+      <p class="text-left">性别: {{ user.get_gender_display }}</p>
+      <p class='text-left'>注册时间：{{user.register_date}}</p>
+    </div>
+  </div>
+  <div class="container mt-5">
+    <h2>{{ user.username }}的博客</h2>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>文章ID</th>
+          <th>文章名称</th>
+          <th>投稿时间</th>
+          {% if user.id == login_user.id  or login_user.admin == 1 %}
+            <th>操作</th>
+          {%endif%}
+        </tr>
+      </thead>
+      <tbody>
+        {% for blog in page_obj%}
+        <tr>
+          <td>{{ blog.id }}</td>
+          <td><a href="/page/{{ blog.id }}">{{ blog.title }}</a></td>
+          <td>{{ blog.upload_date }}</td>
+          {% if user.id == login_user.id or login_user.admin == 1%}
+            <td>
+              <a href="/blog_delete/{{ blog.id }}" class="btn btn-danger">删除</a>
+              <a href="/blog_update/{{ blog.id }}" class="btn btn-primary">编辑</a>
+          {%endif%}
+        </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="3">该用户暂无博客</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">上一页</a>
+      {% endif %}
+      <span class="current-page">{{ page_obj.number }}</span>
+      /
+      <span class="total-pages">{{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">下一页</a>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
